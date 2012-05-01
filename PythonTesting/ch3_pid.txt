@@ -1,0 +1,97 @@
+>>> import time
+>>> import pid
+>>> real_time = time.time
+>>> controller = pid.PID(P=0.5, I=0.5, D=0.5, setpoint=0, initial=12, when=1)
+>>> controller.gains
+(0.5, 0.5, 0.5)
+>>> controller.setpoint
+[0.0]
+>>> controller.previous_time
+1.0
+>>> controller.previous_error
+-12.0
+>>> controller.integrated_error
+0.0
+
+>>> pid = reload(pid)
+>>> controller = pid.PID(P=0.5, I=0.5, D=0.5, setpoint=1, initial=12, when=43)
+>>> controller.gains
+(0.5, 0.5, 0.5)
+>>> controller.setpoint
+[1.0]
+>>> controller.previous_time
+43.0
+>>> controller.previous_error
+-11.0
+>>> controller.integrated_error
+0.0
+
+>>> time.time = (float(x) for x in xrange(1, 1000)).next
+>>> pid = reload(pid)
+>>> controller = pid.PID(P=0.5, I=0.5, D=0.5, setpoint=0, initial=12)
+>>> controller.calculate_response(6)
+-3.0
+>>> controller.calculate_response(3)
+-4.5
+>>> controller.calculate_response(-1.5)
+-0.75
+>>> controller.calculate_response(-2.25)
+-1.125
+>>> time.time = real_time
+
+>>> pid = reload(pid)
+>>> controller = pid.PID(P=0.5, I=0.5, D=0.5, setpoint = 0, initial=12, when=1)
+>>> controller.calculate_response(6, 2)
+-3.0
+>>> controller.calculate_response(3, 3)
+-4.5
+>>> controller.calculate_response(-1.5, 4)
+-0.75
+>>> controller.calculate_response(-2.25, 5)
+-1.125
+
+>>> pid = reload(pid)
+>>> controller = pid.PID(P=0.5, I=0.5, D=0.5, setpoint = 0, initial=12)
+>>> controller.push_setpoint(7)
+>>> controller.setpoint
+[0.0, 7.0]
+>>> controller.push_setpoint(8.5)
+>>> controller.setpoint
+[0.0, 7.0, 8.5]
+>>> controller.pop_setpoint()
+8.5
+>>> controller.setpoint
+[0.0, 7.0]
+>>> controller.pop_setpoint()
+7.0
+>>> controller.setpoint
+[0.0]
+>>> controller.pop_setpoint()
+Traceback (most recent call last):
+ValueError: PID controller must have a setpoint
+
+>>> pid = reload(pid)
+>>> controller = pid.PID(P=-0.5, I=0.5, D=0.5, setpoint = 0, initial=12) # doctest: +ELLIPSIS
+Traceback (most recent call last):
+ValueError: PID ... non-negative
+>>> pid = reload(pid)
+>>> controller = pid.PID(P=0.5, I=-0.5, D=0.5, setpoint = 0, initial=12) # doctest: +ELLIPSIS
+Traceback (most recent call last):
+ValueError: PID ... non-negative
+>>> pid = reload(pid)
+>>> controller = pid.PID(P=0.5, I=0.5, D=-0.5, setpoint = 0, initial=12) # doctest: +ELLIPSIS
+Traceback (most recent call last):
+ValueError: PID ... non-negative
+
+# more tests for complex numbers, for some reasons all fail :)
+
+>>> pid = reload(pid)
+>>> controller = pid.PID(P=0.5, I=0.5, D=0.5, setpoint = 1 + 1j, initial=9.4852813742385695+9.4852813742385695j, when = 1)
+>>> controller.calculate_response(5.2426406871192848+5.2426406871192848j, 2)
+(-2.1213-2.1213j)
+>>> controller.calculate_response(3.1213203435596424+3.1213203435596424j, 3)
+(-3.18198-3.18198j)
+>>> controller.calculate_response(-0.060660171779821193-0.060660171779821193, 4)
+(-0.53033-0.53033j)
+>>> controller.calculate_response(-0.5909902576697319-0.5909902576697319j, 5)
+(-0.7954-0.7954j)

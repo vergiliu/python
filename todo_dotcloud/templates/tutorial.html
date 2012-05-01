@@ -1,0 +1,41 @@
+$def with (form, text, tasks)
+
+<html>
+
+    <head>
+        <title>dotcloud sample page</title>
+<!--        <link rel="stylesheet" type="text/css" href="/static/tutorial.css" /> -->
+        <script type="text/javascript" src="/static/jquery.js"></script>
+
+
+    </head>
+    
+    <body>
+
+        <form class="form" method="POST">
+            Add new task <input type="text" name="textfield" id="textfield"/>
+            <input class="button" type="submit" value="add"/>
+        </form>
+
+        <br><br>
+        <span id="foo">Hello $text</span>
+        <span id="task"></span>
+        <br><br>
+        
+        Current tasks
+        <ul>
+        $if tasks:
+            $for key in tasks.iterkeys():
+                <li /> $key
+                    <a href="/add/$loop.index0"><img src="/static/badge-circle-plus-16-ns.png" alt="add tasks"></a>
+                    <a href="/remove/$loop.index0"><img src="/static/badge-circle-minus-16-ns.png" alt="remove"></a>
+                    <a href="/edit/$loop.index0"><img src="/static/pencil-16-ns.png" alt="edit"></a>
+                    <a href="/done/$loop.index0"><img src="/static/badge-circle-check-16-ns.png" alt="done"></a>
+        $else:
+            No tasks are defined
+        </ul>
+        <a href="/logout">logout </a>
+        
+    </body>
+    
+</html>

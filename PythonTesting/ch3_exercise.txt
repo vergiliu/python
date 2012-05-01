@@ -1,0 +1,74 @@
+# The library consists of three classes, one representing bank accounts,
+# one representing people, and one representing monetary transactions.
+# Person objects should be able to draw on zero or more accounts,
+# and account objects should be accessible to one or more people.
+# Transactions should represent the transfer of a certain amount of
+# money between one person and another, by transferring the money from
+# an account accessible by the first person to an account accessible by
+# the second.
+# Attempts to create invalid transactions should fail.
+# After having been created, it should be possible to execute a
+# transaction to perform the actual transfer between accounts.
+
+>>> from ch3_exercise import *
+
+>>> john = People("John")
+>>> mary = People("Mary")
+>>> bob = People("Bob")
+>>> dude = People("Dude")
+
+>>> account1 = BankAccount("CHASE", 1500)
+>>> account2 = BankAccount("BofA", 0)
+>>> account3 = BankAccount("BofA", 5000)
+
+>>> john.addBankAccount(account1)
+'CHASE'
+>>> john.addBankAccount(account2)
+'BofA'
+
+>>> john.drawAmount(50, "CHASE")
+1450
+>>> john.drawAmount(50, "CHASE")
+1400
+
+>>> john.drawAmount(50, "BofA")
+Traceback (most recent call last):
+ValueError: Insufficient funds to withdraw money
+
+>>> john.addAmount(120, "BofA")
+120
+
+>>> mary.drawAmount(100, "empty")
+Traceback (most recent call last):
+ValueError: No bank account used
+
+
+>>> mary.addBankAccount(account3)
+'BofA'
+>>> bob.addBankAccount(account3)
+'BofA'
+>>> mary.drawAmount(1000, "BofA")
+4000
+>>> bob.addAmount(500, "BofA")
+4500
+
+>>> john.getAccounts()
+bank = BofA sum = 120
+bank = CHASE sum = 1400
+>>> bob.getAccounts()
+bank = BofA sum = 4500
+>>> mary.getAccounts()
+bank = BofA sum = 4500
+
+>>> john.wireMoneyTo(mary, 100)
+100
+
+>>> john.getAccounts()
+bank = BofA sum = 20
+bank = CHASE sum = 1400
+>>> bob.getAccounts()
+bank = BofA sum = 4600
+
+>>> bob.wireMoneyTo(dude, 10)
+Traceback (most recent call last):
+ValueError: Invalid transaction

@@ -1,0 +1,15 @@
+$def with (anUser, todoadd)
+$if anUser:
+    Hello $anUser['userEmail']
+    
+    <ul>
+        <li />ana
+        <li />are
+        <li />$:todoadd.render()
+        <li /> <input type="text" name="gogu" id="gogu" onfocus="this.value=add.answer"></input>
+        <button onClick='var answer = prompt ("What is your name ?","")' id="add" onrelease="todo.value = answer" name="add">add</button>
+    </ul>
+$else:
+    Hello stranger
+
+

@@ -1,0 +1,7 @@
+Various Python Projects and samples
+
+fbc - fb challenges try
+ProjectEuler - project Euler samples
+PythonTesting - python testing book examples
+various - implementing a trie, hckrnews cli 
+todo_dotcloud - sample wsgi app to deploy in dotcloud using web.py and mongodb

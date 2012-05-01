@@ -1,0 +1,5 @@
+Test project for dotcloud.com using python and mongodb
+
+Other dependencies:
+* web.py
+* pymongo (from mongodb.org)

@@ -1,0 +1,126 @@
+>>> from mocker import Mocker, ANY, ARGS, KWARGS, MATCH
+>>> import ch4_operations
+
+>>> mocker = Mocker()   # first we create the mocking context
+>>> p1 = mocker.mock()  # create mock objects
+>>> p2 = mocker.mock()
+>>> mocker.replay()     # replay mocking objects
+>>> m = ch4_operations.multiply(p1,p2)
+>>> m.operands == (p1,p2)
+True
+>>> mocker.restore()    # restore actual class context
+>>> mocker.verify()     # verify if tests work
+
+>>> mocker = Mocker()
+>>> p1 = mocker.mock()
+>>> p1.evaluate({}) #doctest: +ELLIPSIS
+<mocker.Mock object at ...>
+>>> mocker.result(97.43)
+>>> mocker.replay()
+
+>>> m = ch4_operations.multiply(p1)
+>>> m.evaluate({})
+Traceback (most recent call last):
+ValueError: multiply without at least two operands is meaningless
+>>> mocker.restore()
+>>> mocker.verify()
+
+>>> mocker = Mocker()
+>>> p1=mocker.mock()
+>>> p1.evaluate({}) #doctest: +ELLIPSIS
+<mocker.Mock object at ...>
+
+
+>>> mocker.result(97.43)
+>>> p2 = mocker.mock()
+>>> p2.evaluate({}) #doctest: +ELLIPSIS
+<mocker.Mock object at ...>
+>>> mocker.result(-16.25)
+>>> mocker.replay()
+>>> m = ch4_operations.multiply(p1, p2)
+>>> round(m.evaluate({}), 2)
+-1583.24
+>>> mocker.restore()
+>>> mocker.verify()
+
+
+mocking a function call to function_call and
+checking that an object is created
+>>> mocker = Mocker()
+>>> function_call = mocker.mock()
+>>> function_call(56, "hello") #doctest: +ELLIPSIS
+<mocker.Mock object at ...>
+>>> mocker.result(11)               # when function is called w/ 11 & "hello" return 11
+>>> mocker.replay()                 
+>>> function_call(56, "hello")      # function called
+11
+>>> mocker.restore()
+>>> mocker.verify()
+
+
+mocking containers
+>>> mocker = Mocker()
+>>> das_container = mocker.mock()
+>>> das_container['hello'] = 'jude'
+>>> das_container['hello'] #doctest: +ELLIPSIS
+<mocker.Mock ...>
+>>> mocker.result('jude')
+>>> len(das_container)
+0
+>>> 'jude' in das_container #doctest: +SKIP
+True
+>>> mocker.result(True)
+>>> del das_container['hello']
+>>> mocker.result(None)
+>>> mocker.replay()
+>>> das_container['hello'] = 'jude'
+>>> das_container['hello']
+'jude'
+>>> len(das_container)
+1
+>>> 'jude' in das_container #doctest: +SKIP
+True
+>>> del das_container['hello']
+>>> mocker.restore()
+>>> mocker.verify()
+
+
+mocking ANY values as input when the return value matters
+>>> mocker = Mocker()
+>>> func = mocker.mock()
+>>> func(7, ANY) #doctest: +ELLIPSIS
+<mocker.Mock object ...>
+>>> mocker.result(22)
+>>> mocker.replay()
+>>> func (7, "some random string")
+22
+>>> mocker.restore()
+>>> mocker.verify()
+
+
+same for ARGS and KWARGS
+>>> m = Mocker()
+>>> f = m.mock()
+>>> f(1, KWARGS) #doctest: +ELLIPSIS
+<mocker.Mock ...>
+>>> m.result("oh yeah")
+>>> m.replay()
+>>> f(1, ana="are mere", ioana="vine si cere")
+'oh yeah'
+>>> m.restore()
+>>> m.verify()
+
+
+MATCH
+>>> def oddvalues(values): return values % 2 == 1
+>>> m = Mocker()
+>>> foonction = m.mock()
+>>> foonction(7, MATCH(oddvalues)) #doctest: +ELLIPSIS
+<mocker.Mock ...>
+>>> m.result(99)
+>>> m.replay()
+>>> foonction(7, 1001)
+99
+>>> m.restore()
+>>> m.verify()
+

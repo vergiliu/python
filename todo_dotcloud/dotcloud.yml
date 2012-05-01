@@ -1,0 +1,6 @@
+mypythonservice:
+  type: python
+
+mongo:
+  type: mongodb
+

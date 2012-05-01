@@ -1,0 +1,27 @@
+
+>>> from mocker import Mocker, ARGS
+>>> m = Mocker()
+>>> something = m.mock()
+>>> something('test').trim().split(',')[0] #doctest: +ELLIPSIS
+<mocker.Mock ...>
+>>> m.result('test')
+>>> m.replay()
+>>> something('test').trim().split(',')[0] #doctest: +ELLIPSIS
+'test'
+>>> m.restore()
+>>> m.verify()
+
+Using count to specify number of times a call is expected
+>>> m = Mocker()
+>>> f = m.mock()
+>>> f(ARGS) #doctest: +ELLIPSIS
+<mocker.Mock ...>
+>>> m.result(0)
+>>> m.replay()
+>>> m.count(2)
+>>> f(0)
+0
+>>> f(1)
+0
+>>> m.verify()
+>>> m.restore()
