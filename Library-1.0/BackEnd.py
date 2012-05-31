@@ -3,18 +3,38 @@ import os
 import sys
 import time
 import json
+import zmq
 
-class Bend:
-    def __init__(self, port=59152, host="localhost"):
+class BackEnd:
+    """BackEnd should handle all of the processing"""
+
+    def __init__(self, port=49152, host="127.0.0.1"):
         self.port=port
         self.host=host
+        context = zmq.Context()
+        socket = context.socket(zmq.REP)
+        connection_string = "tcp://"+ host +":"+ str(port) 
+        socket.bind(connection_string)
+        self.S = socket
 
-    def dostuff(self):
+    def run(self):
         print("port = %d" % self.port)
         print("host = %s" % self.host)
-        print(" import json or simplejson")
-        #...
+        jd = json.JSONDecoder()
+        jc = json.JSONEncoder()
+        #ACK = {'cmd': 'ACK', 'data': None}
+        while True:
+            msg = self.S.recv()
+            self.processMessage(jd, msg)
+            self.S.send("ACK")
         print(" for cli and api/app communication")
+
+    def processMessage(self, aJsonDecoder, aMessage):
+        myData = aJsonDecoder.decode(aMessage)
+        print("command = %s data = %s" % (myData['cmd'], myData['data']))
+        if myData['cmd'] == "exit":
+            self.S.send("BYE")
+            self.cleanup()
 
     def startup(self):
         """
@@ -26,6 +46,12 @@ class Bend:
         indexing
         save in memory
         """
+        pass
+
+    def cleanup(self):
+        print("cleanup ")
+        self.exit()
+        # TODO
 
     def exit(self):
         print("exit")
@@ -36,7 +62,7 @@ def jeison():
     jc = json.JSONEncoder()
     jd = json.JSONDecoder()
 
-    mydict_send = {'command': 'test', 'data': }
+    mydict_send = {'command': 'test', 'data': None}
 
     mydata = jc.encode(mydict)
     # send mydata
@@ -45,8 +71,6 @@ def jeison():
 
 if __name__ == "__main__":
     print("starting")
-    B = Bend()
-    B.dostuff()
+    B = BackEnd()
+    B.run()
     print("done")
-
-
