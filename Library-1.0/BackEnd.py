@@ -5,6 +5,9 @@ import time
 import json
 import zmq
 
+# http://cpiekarski.com/2011/05/09/super-easy-python-json-client-server/
+# http://stackoverflow.com/questions/1712249/python-json-rpc-server-with-ability-to-stream
+
 class BackEnd:
     """BackEnd should handle all of the processing"""
 
@@ -15,25 +18,22 @@ class BackEnd:
         socket = context.socket(zmq.REP)
         connection_string = "tcp://"+ host +":"+ str(port) 
         socket.bind(connection_string)
-        self.S = socket
+        self.theSocket = socket
 
     def run(self):
-        print("port = %d" % self.port)
-        print("host = %s" % self.host)
+        self.startup()
         jd = json.JSONDecoder()
         jc = json.JSONEncoder()
-        #ACK = {'cmd': 'ACK', 'data': None}
         while True:
-            msg = self.S.recv()
+            msg = self.theSocket.recv()
             self.processMessage(jd, msg)
-            self.S.send("ACK")
-        print(" for cli and api/app communication")
+            self.theSocket.send("ACK")
 
     def processMessage(self, aJsonDecoder, aMessage):
         myData = aJsonDecoder.decode(aMessage)
-        print("command = %s data = %s" % (myData['cmd'], myData['data']))
+        print("command = %s ( data = %s )" % (myData['cmd'], myData['data']))
         if myData['cmd'] == "exit":
-            self.S.send("BYE")
+            self.theSocket.send("BYE")
             self.cleanup()
 
     def startup(self):
@@ -46,31 +46,15 @@ class BackEnd:
         indexing
         save in memory
         """
-        pass
+        print("Running on host = %s : %d" % (self.host, self.port))
 
     def cleanup(self):
         print("cleanup ")
-        self.exit()
+        exit()
         # TODO
 
-    def exit(self):
-        print("exit")
-
-def jeison():
-    # http://cpiekarski.com/2011/05/09/super-easy-python-json-client-server/
-    # http://stackoverflow.com/questions/1712249/python-json-rpc-server-with-ability-to-stream
-    jc = json.JSONEncoder()
-    jd = json.JSONDecoder()
-
-    mydict_send = {'command': 'test', 'data': None}
-
-    mydata = jc.encode(mydict)
-    # send mydata
-    # receive mydata_recv
-    mydict_recv = jd.decode(mydata_recv)
-
 if __name__ == "__main__":
-    print("starting")
+    print("BackEnd starting")
     B = BackEnd()
     B.run()
-    print("done")
+    print("BackEnd stopped")

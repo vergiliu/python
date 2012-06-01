@@ -5,4 +5,4 @@ m = magiccliparser()
 
 print "CPU count = %d" % multiprocessing.cpu_count()
 
-m.startit()
+m.startCLI()
