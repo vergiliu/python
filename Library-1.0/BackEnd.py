@@ -5,6 +5,7 @@ import time
 import json
 import zmq
 
+from process_text import ProcessText
 # http://cpiekarski.com/2011/05/09/super-easy-python-json-client-server/
 # http://stackoverflow.com/questions/1712249/python-json-rpc-server-with-ability-to-stream
 
@@ -18,6 +19,7 @@ class BackEnd:
         socket = context.socket(zmq.REP)
         connection_string = "tcp://"+ host +":"+ str(port) 
         socket.bind(connection_string)
+        self.theContext = context
         self.theSocket = socket
 
     def run(self):
@@ -32,9 +34,13 @@ class BackEnd:
     def processMessage(self, aJsonDecoder, aMessage):
         myData = aJsonDecoder.decode(aMessage)
         print("command = %s ( data = %s )" % (myData['cmd'], myData['data']))
-        if myData['cmd'] == "exit":
+        if   myData['cmd'] == "exit" or myData['cmd'] == "quit":
             self.theSocket.send("BYE")
             self.cleanup()
+        elif myData['cmd'] == "process_text":
+            aProcessor = ProcessText()
+            aProcessor.start()
+            print("starting process_text module")
 
     def startup(self):
         """
@@ -49,9 +55,12 @@ class BackEnd:
         print("Running on host = %s : %d" % (self.host, self.port))
 
     def cleanup(self):
-        print("cleanup ")
+        print("cleaning up")
+        print("closing ZMQ socket")
+        self.theSocket.close()
+        print("destroying ZMQ context")
+        self.theContext.destroy()
         exit()
-        # TODO
 
 if __name__ == "__main__":
     print("BackEnd starting")

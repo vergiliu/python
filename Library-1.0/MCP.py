@@ -3,6 +3,7 @@ from __future__ import print_function
 import zmq
 import json
 import cmd
+# http://nichol.as/zeromq-an-introduction
 
 class magiccliparser(cmd.Cmd):
 
