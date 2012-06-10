@@ -1,0 +1,11 @@
+# main configuration file
+# format might change
+server:
+    parseFolders:
+        - '~'
+        - '/opt/test'
+    threads: 2      #not used
+    max-threads: 8  #not used
+
+client:
+    name: 'cli'     #not used
