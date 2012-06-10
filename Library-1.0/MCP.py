@@ -1,9 +1,6 @@
-from __future__ import print_function
-
 import zmq
 import json
 import cmd
-# http://nichol.as/zeromq-an-introduction
 
 class magiccliparser(cmd.Cmd):
 
@@ -65,4 +62,4 @@ class magiccliparser(cmd.Cmd):
         self.cmdloop()
 
 if __name__ == "__main__":
-    print("should not be called directly")
+    print("must not be called directly")

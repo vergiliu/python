@@ -3,14 +3,17 @@ import pprint
 import os
 
 # author: vergiliu
+# purpose: read/write YAML configuration file(s)
 
 class ConfigReader:
     """ ConfigReader class will handle the configuration file
     uses external PyYAML dependency to parse, read, and save the configuration file
     uses prettyprint to dump the configuration if needed"""
+
     def __init__(self):
         self.theConfigurationData = None
         self.theConfigurationFile = None
+        print("configuration reader initialized")
 
     # TODO throw exception instead of exit
     def loadConfigurationFile(self, aFilename):
@@ -36,7 +39,7 @@ class ConfigReader:
             return None
 
     def printConfiguration(self):
-        print("configuration data:")
+        print("Configuration data:")
         pprint.pprint(self.theConfigurationData)
 
 if __name__ == "__main__":

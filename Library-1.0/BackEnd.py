@@ -1,14 +1,13 @@
-from __future__ import print_function
 import os
 import sys
 import time
 import json
 import zmq
 
+import ConfigReader
 from process_text import ProcessText
-# http://cpiekarski.com/2011/05/09/super-easy-python-json-client-server/
-# http://stackoverflow.com/questions/1712249/python-json-rpc-server-with-ability-to-stream
 
+# TODO handle Ctrl+C to stop cleanly
 class BackEnd:
     """BackEnd should handle all of the processing"""
 
@@ -53,6 +52,9 @@ class BackEnd:
         save in memory
         """
         print("Running on host = %s : %d" % (self.host, self.port))
+        myConfig = ConfigReader.ConfigReader()
+        myConfig.loadConfigurationFile('config.yaml')
+        myConfig.getConfigurationForSection('server')
 
     def cleanup(self):
         print("cleaning up")

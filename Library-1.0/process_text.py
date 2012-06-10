@@ -1,7 +1,4 @@
-from __future__ import print_function
-
 import threading
-import thread
 import time
 #import parseargs
 
@@ -11,16 +8,16 @@ import time
 # TODO add zmq processing of messages
 
 class ProcessText(threading.Thread):
-	def __init__(self):
-		threading.Thread.__init__(self)
-		print("init")
+    def __init__(self):
+        threading.Thread.__init__(self)
+        print("init")
 
-	def run(self):
-		print("ProcessText running...")
-		while True:
-			time.sleep(1)
-			print(".", end=" ")
-
+    def run(self):
+        print("ProcessText running...")
+        while True:
+            time.sleep(1)
+            print(".")
+            # TODO print without newline in python3
 
 if __name__ == "__main__":
-	print("cannot be called directly")
+    print("cannot be called directly")

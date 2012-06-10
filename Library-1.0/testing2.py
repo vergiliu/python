@@ -7,24 +7,24 @@ import os
 class TTest(threading.Thread):
     def __init__(self, event, name):
         threading.Thread.__init__(self)
-        print "init"
+        print ("init")
         self.event = event
         self.name = name
 
     def setEvent(self):
         self.event.set()
-        print "set " + self.name
+        print ("set " + self.name)
 
     def clearEvent(self):
         self.event.clear()
-        print "clear " +self.name
+        print ("clear " +self.name)
         
     def waitEvent(self):
         self.event.wait()
-        print "wait " +self.name
+        print ("wait " +self.name)
 
     def run(self):
-        print "running " +self.name
+        print ("running " +self.name)
         self.waitEvent()
 
 class A(threading.Thread):
@@ -46,7 +46,7 @@ class A(threading.Thread):
         if os.access(aPath, os.R_OK):
             self.theRootPaths.append(aPath)
         else:
-            print "path "+ aPath +"can't be added"
+            print ("path "+ aPath +"can't be added")
 
 class AllFiles():
     def __init__(self):
@@ -61,7 +61,7 @@ class AllFiles():
                 #    print ">> " + dire
                 # useless    
         else:
-            print "ERR monkey"
+            print "(ERR monkey")
             # TODO raise
 
     def findAllFiles(self, anExtension):
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     ana.addPath("/home/123")
     ana.addPath("~/Desktop")
     ana.start()
-    print len(ana.theFiles), "files, size ana = ", int(sys.getsizeof(ana.theFiles)/1024) , "KB"
+    print (len(ana.theFiles), "files, size ana = ", int(sys.getsizeof(ana.theFiles)/1024) , "KB")
     print("almost done...")
 
 
@@ -101,8 +101,6 @@ if __name__ == "__main__":
     myFiles.addPath("/home/123")
     myFiles.addPath("~/Desktop")
     #print myFiles.findAllFiles("txt")
-    print "total files ", myFiles.howManyFiles()
-    print "size = ", int(sys.getsizeof(myFiles.theFiles)/1024) , "KB"
-    print len(ana.theFiles), "files, size ana = ", int(sys.getsizeof(ana.theFiles)/1024) , "KB"
-
-    #http://docs.python.org/library/queue.html?highlight=queue#Queue 
+    print ("total files ", myFiles.howManyFiles())
+    print ("size = ", int(sys.getsizeof(myFiles.theFiles)/1024) , "KB")
+    print (len(ana.theFiles), "files, size ana = ", int(sys.getsizeof(ana.theFiles)/1024) , "KB")
