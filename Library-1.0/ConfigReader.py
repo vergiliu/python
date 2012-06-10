@@ -13,7 +13,7 @@ class ConfigReader:
     def __init__(self):
         self.theConfigurationData = None
         self.theConfigurationFile = None
-        print("configuration reader initialized")
+        print("Configuration reader initialized")
 
     # TODO throw exception instead of exit
     def loadConfigurationFile(self, aFilename):
