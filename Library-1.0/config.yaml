@@ -9,11 +9,3 @@ server:
 
 client:
     name: 'cli'     #not used
-
-# all external links will be moved here
-# unseen :(
-# http://docs.python.org/library/queue.html?highlight=queue#Queue 
-# seen   :)
-# http://cpiekarski.com/2011/05/09/super-easy-python-json-client-server/
-# http://stackoverflow.com/questions/1712249/python-json-rpc-server-with-ability-to-stream
-# http://nichol.as/zeromq-an-introduction
