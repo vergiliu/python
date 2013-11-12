@@ -1,12 +1,8 @@
 import unittest
-import unittest.mock
+from unittest.mock import Mock
+from unittest.mock import MagicMock
 
 import pid
-
-
-# -*- coding: utf-8 -*-
-import time
-
 
 class AClass():
     def __init__(self):
@@ -36,9 +32,7 @@ class FailingTests(unittest.TestCase):
 
 class TestPidConstructor(unittest.TestCase):
     def ignore_test_without_when(self):
-        real = time
-        real.method = Mock(name="time")
-        real.method.return_value = 1
+        time = MagicMock()
         controller = pid.PID(P=0.5, I=0.5, D=0.5, setpoint=0, initial=12)
         self.assertEqual(controller.gains, (0.5, 0.5, 0.5))
         self.assertAlmostEqual(controller.setpoint[0], 0.0)
@@ -59,7 +53,7 @@ class TestPidConstructor(unittest.TestCase):
 
 class TestCalculateResponse(unittest.TestCase):
     def ignore_test_without_when(self):
-        mocker = Mocker()
+        mocker = Mock()
         mock_time = mocker.replace('time.time')
         mock_time()
         mocker.result(1.0)
@@ -87,6 +81,13 @@ class TestCalculateResponse(unittest.TestCase):
         self.assertEqual(controller.calculate_response(-1.5, 4), -0.75)
         self.assertEqual(controller.calculate_response(-2.25, 5), -1.125)
 
+class RaiseAssert(unittest.TestCase):
+    def test_fails_assert_raises(self):
+        self.assertRaises(ValueError, int, '8ca2', base=16)
+
+    def test_fails_with_message(self):
+        if not (2 < 5):
+            self.fail('2 should really be less than 5')
 
 if __name__ == '__main__':
     unittest.main()
