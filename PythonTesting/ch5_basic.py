@@ -50,6 +50,7 @@ class TestPidConstructor(unittest.TestCase):
         self.assertAlmostEqual(controller.previous_error, -11.0)
         self.assertAlmostEqual(controller.integrated_error, 0)
 
+class time
 
 class TestCalculateResponse(unittest.TestCase):
     def ignore_test_without_when(self):
