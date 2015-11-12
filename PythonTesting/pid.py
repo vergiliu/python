@@ -1,4 +1,4 @@
-from time import time
+import time
 
 class PID:
     def __init__(self, P, I, D, setpoint, initial, when=None):
@@ -11,7 +11,7 @@ class PID:
             initial = float(initial)
         self.setpoint = [setpoint]
         if when is None:
-            self.previous_time = time()
+            self.previous_time = time.time()
         else:
             self.previous_time = float(when)
         self.previous_error = self.setpoint[-1] - initial
@@ -27,7 +27,7 @@ class PID:
         
     def calculate_response(self, value, now=None):
         if now is None:
-            now = time()
+            now = time.time()
         else:
             now = float(now)
         P, I, D = self.gains

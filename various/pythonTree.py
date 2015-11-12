@@ -1,47 +1,65 @@
-
 import random
 
-class Node:
 
+class Node:
     data = None
-    left =  None
+    left = None
     right = None
 
-    def __init__(self, initialValue):
-        self.data = initialValue
+    def __init__(self, initial_value):
+        self.data = initial_value
 
-    def addNode(self, newNode):
+    def add_node(self, new_node):
         if not self:
-            self = newNode
-        elif newNode.data >= self.data:
+            self = new_node
+        elif new_node.data >= self.data:
             if not self.right:
-                self.right = newNode
+                self.right = new_node
             else:
-                self.right.addNode(newNode)
+                self.right.add_node(new_node)
         else:
             if not self.left:
-                self.left = newNode
+                self.left = new_node
             else:
-                self.left.addNode(newNode)
+                self.left.add_node(new_node)
 
-    def printInorder(self):
+    def print_in_order(self):
         if self.left:
-            self.left.printInorder()
+            self.left.print_in_order()
         if self:
             print str(self.data),
         if self.right:
-            self.right.printInorder()
+            self.right.print_in_order()
+
+    def check_in_order(self, mini, maxi):
+        if self.left:
+            self.left.check_in_order(mini, maxi)
+        if self:
+            print str("data= {} min={} max={}=> {}/{}".format(self.data))
+        if self.right:
+            self.right.check_in_order(mini, maxi)
+
 
 if __name__ == "__main__":
 
     root = Node(0)
 
-    for i in xrange(1,100):
-        value = random.randint(1,1000)
-        root.addNode(Node(value))
+    for i in xrange(1, 10):
+        value = random.randint(1, 1000)
+        root.add_node(Node(value))
         print value,
+
+    root.print_in_order()
+    root.check_in_order(0, 0)
 
     print "\n---"
 
-    root.printInorder()
+    broken = Node(3)
+    broken.left = Node(2)
+    broken.left.left = Node(1)
+    broken.left.right = Node(4)
+    broken.right = Node(5)
+    broken.right.left = Node(6)
 
+    broken.print_in_order()
+    broken.check_in_order(3, 3)
