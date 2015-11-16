@@ -9,15 +9,19 @@ def print_instances(the_instances):
     # Your default security group does not allow incoming SSH traffic by default.
     for i in the_instances:
         print("-" * 50)
-        print("EC2 instance={} [{}] AMI={} ssh-key={} hypervisor={}".format(i.id, i.state['Name'], i.image_id, i.key_name, i.hypervisor))
-        print("  connect: {} / {} ({})".format(i.public_dns_name, i.public_ip_address, i.private_ip_address))
-        print("  security groups: {}".format(i.security_groups))
-        print("  [{}] root storage is {}".format(i.root_device_type, i.root_device_name))
+        current_state = i.state['Name']
+        print("EC2 instance={} [{}] AMI={} ssh-key={} hypervisor={}".format(i.id, current_state, i.image_id, i.key_name, i.hypervisor))
+        if current_state != "terminated":
+            print("  connect: {} / {} ({})".format(i.public_dns_name, i.public_ip_address, i.private_ip_address))
+            print("  security groups: {}".format(i.security_groups))
+            print("  [{}] root storage is {}".format(i.root_device_type, i.root_device_name))
 
 
 def get_running_instances():
     return ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
 
+def get_all_instances():
+    return ec2.instances.filter()
 
 if __name__ == "__main__":
     instances = None
@@ -36,9 +40,9 @@ if __name__ == "__main__":
     # print("block device= {}".format(image.block_device_mappings))
 
     if option == "start":
-        # boto3 docs
+        se_groups = ["launch-wizard-1"]
         instances = ec2.create_instances(ImageId=ami_image, MinCount=1, MaxCount=1, InstanceType='t2.micro',
-                                         KeyName='temp_key', Monitoring={'Enabled': False})
+                                         KeyName='temp_key', Monitoring={'Enabled': False}, SecurityGroups=se_groups)
         print_instances(instances)
 
     if option == "stop":
@@ -53,7 +57,7 @@ if __name__ == "__main__":
     if option == "list":
         # Boto 3:  # Use the filter() method of the instances collection to retrieve
         # all running EC2 instances.
-        running_instances = get_running_instances()
+        running_instances = get_all_instances()
         print_instances(running_instances)
         # debug
         # pprint(ec2_client.describe_instances())
