@@ -20,15 +20,19 @@ def print_instances(the_instances):
 def get_running_instances():
     return ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
 
+
 def get_all_instances():
     return ec2.instances.filter()
 
-if __name__ == "__main__":
-    instances = None
-    option = sys.argv[1] if len(sys.argv) > 1 else "nothing"
 
-    if not option or option == "nothing":
-        print("invalid usage")
+if __name__ == "__main__":
+    # todo 0 Security Groups
+    # todo 1 region see/select
+    # todo 2 instance type
+    # todo 3 object(s)?
+    instances = None
+    # list by default
+    option = sys.argv[1] if len(sys.argv) > 1 else "list"
 
     ami_image = 'ami-60b6c60a'  # Amazon Linux
 
