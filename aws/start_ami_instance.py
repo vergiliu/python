@@ -26,17 +26,20 @@ def get_all_instances():
 
 
 def get_ssh_security_group():
+    ssh_group = None
     all_vpcs = ec2_client.describe_vpcs()
     for vpc in all_vpcs['Vpcs']:
         if vpc['IsDefault']:
             default_vpc = vpc
+
     all_sec_groups = ec2_client.describe_security_groups()
+    # VPC = ec2.Vpc(default_vpc.VpcId)
+
     for grp in all_sec_groups['SecurityGroups']:
         for permission in grp['IpPermissions']:
             if 'ToPort' in permission and 22 == permission['ToPort']:
                 ssh_group = grp
 
-    # VPC = ec2.Vpc(default_vpc.VpcId)
     my_security_group = ec2.SecurityGroup(ssh_group['GroupId'])
     # might be useful
     # my_security_group.id
@@ -46,8 +49,16 @@ def get_ssh_security_group():
 
 if __name__ == "__main__":
     # todo 1 region see/select
-    # todo 2 instance type
-    # todo 3 object(s)?
+    # import pprint
+    # pprint.pprint(ec2_client.describe_regions())
+
+    # todo 2 instance type ???
+
+    # todo 3 object(s)
+
+    # todo 4 add new security group which allows SSH
+
+    # todo 5 check ResponseMetadata
     instances = None
     # list by default
     option = sys.argv[1] if len(sys.argv) > 1 else "magic"
@@ -62,12 +73,8 @@ if __name__ == "__main__":
     # print("block device= {}".format(image.block_device_mappings))
 
     if option == "magic":
-        # todo 4 add new security group which allows SSH
-        # todo 5 check ResponseMetadata
         # todo check_if_allow_ssh_group_is_present
         default_vpc = None
-        ssh_group = None
-
         print(get_ssh_security_group())
         # todo create_group
         # todo get_group_name?!?
