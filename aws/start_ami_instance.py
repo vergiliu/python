@@ -25,14 +25,32 @@ def get_all_instances():
     return ec2.instances.filter()
 
 
+def get_ssh_security_group():
+    all_vpcs = ec2_client.describe_vpcs()
+    for vpc in all_vpcs['Vpcs']:
+        if vpc['IsDefault']:
+            default_vpc = vpc
+    all_sec_groups = ec2_client.describe_security_groups()
+    for grp in all_sec_groups['SecurityGroups']:
+        for permission in grp['IpPermissions']:
+            if 'ToPort' in permission and 22 == permission['ToPort']:
+                ssh_group = grp
+
+    # VPC = ec2.Vpc(default_vpc.VpcId)
+    my_security_group = ec2.SecurityGroup(ssh_group['GroupId'])
+    # might be useful
+    # my_security_group.id
+    # my_security_group.vpc_id
+    return [my_security_group.group_name]
+
+
 if __name__ == "__main__":
-    # todo 0 Security Groups
     # todo 1 region see/select
     # todo 2 instance type
     # todo 3 object(s)?
     instances = None
     # list by default
-    option = sys.argv[1] if len(sys.argv) > 1 else "list"
+    option = sys.argv[1] if len(sys.argv) > 1 else "magic"
 
     ami_image = 'ami-60b6c60a'  # Amazon Linux
 
@@ -43,8 +61,19 @@ if __name__ == "__main__":
     # print("AMI name= {} [{}]".format(image.name, image.virtualization_type))
     # print("block device= {}".format(image.block_device_mappings))
 
+    if option == "magic":
+        # todo 4 add new security group which allows SSH
+        # todo 5 check ResponseMetadata
+        # todo check_if_allow_ssh_group_is_present
+        default_vpc = None
+        ssh_group = None
+
+        print(get_ssh_security_group())
+        # todo create_group
+        # todo get_group_name?!?
+
     if option == "start":
-        se_groups = ["launch-wizard-1"]
+        se_groups = get_ssh_security_group()
         instances = ec2.create_instances(ImageId=ami_image, MinCount=1, MaxCount=1, InstanceType='t2.micro',
                                          KeyName='temp_key', Monitoring={'Enabled': False}, SecurityGroups=se_groups)
         print_instances(instances)
