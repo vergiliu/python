@@ -48,19 +48,13 @@ def get_ssh_security_group():
 
 
 if __name__ == "__main__":
-    # todo 1 region see/select
-    # import pprint
-    # pprint.pprint(ec2_client.describe_regions())
-
     # todo 2 instance type ???
-
     # todo 3 object(s)
-
     # todo 4 add new security group which allows SSH
-
     # todo 5 check ResponseMetadata
+    
     instances = None
-    # list by default
+    # magic by default
     option = sys.argv[1] if len(sys.argv) > 1 else "magic"
 
     ami_image = 'ami-60b6c60a'  # Amazon Linux
@@ -71,13 +65,15 @@ if __name__ == "__main__":
     image = ec2.Image(ami_image)
     # print("AMI name= {} [{}]".format(image.name, image.virtualization_type))
     # print("block device= {}".format(image.block_device_mappings))
+    
+    # region see/select
+    regions = ec2_client.describe_regions()
+    # import pprint
+    # pprint.pprint(regions)
 
     if option == "magic":
         # todo check_if_allow_ssh_group_is_present
-        default_vpc = None
-        print(get_ssh_security_group())
-        # todo create_group
-        # todo get_group_name?!?
+        print("ssh group = {}".format(get_ssh_security_group()))  
 
     if option == "start":
         se_groups = get_ssh_security_group()
