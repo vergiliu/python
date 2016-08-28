@@ -1,10 +1,8 @@
+import json
+import logging
 import sys
 
 import boto3
-
-import logging
-
-import json
 
 
 def print_instances(the_instances):
@@ -96,13 +94,15 @@ if __name__ == "__main__":
         ec2.instances.filter(InstanceIds=my_instances_ids).stop()
         ec2.instances.filter(InstanceIds=my_instances_ids).terminate()
 
-    if option == "list":
+    if option == "list-all":
         # Boto 3:  # Use the filter() method of the instances collection to retrieve
         # all running EC2 instances.
-        running_instances = get_all_instances()
-        print_instances(running_instances)
-        # debug
-        # pprint(ec2_client.describe_instances())
+        all_instances = get_all_instances()
+        print_instances(all_instances)
+
+    if option == "list-running":
+        run_instances = get_running_instances()
+        print_instances(run_instances)
 
     if option == "keypair":
         key_name = 'temp_key'
