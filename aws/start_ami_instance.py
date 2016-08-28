@@ -2,6 +2,10 @@ import sys
 
 import boto3
 
+import logging
+
+import json
+
 
 def print_instances(the_instances):
     # debug
@@ -48,32 +52,38 @@ def get_ssh_security_group():
 
 
 if __name__ == "__main__":
-    # todo 2 instance type ???
-    # todo 3 object(s)
-    # todo 4 add new security group which allows SSH
-    # todo 5 check ResponseMetadata
-    
+    # todo select AMI instance type
+    # todo instance type ???
+    # todo object(s)
+    # todo add new security group which allows SSH
+    # todo check ResponseMetadata
+
+    logging.basicConfig(format='%(asctime)-15s %(funcName)s %(message)s')
+    log = logging.getLogger(__name__)
+    log.setLevel(logging.INFO)
+    # log.addHandler(logging.StreamHandler(stream=sys.stdout))
+
     instances = None
     # magic by default
     option = sys.argv[1] if len(sys.argv) > 1 else "magic"
 
-    ami_image = 'ami-60b6c60a'  # Amazon Linux
+    ami_image = 'ami-6869aa05'  # amazon 2016.03.3
+    #ami_image = 'ami-60b6c60a'  # Amazon Linux
 
     ec2 = boto3.resource('ec2')
     ec2_client = boto3.client('ec2')
 
     image = ec2.Image(ami_image)
-    # print("AMI name= {} [{}]".format(image.name, image.virtualization_type))
-    # print("block device= {}".format(image.block_device_mappings))
-    
+    log.debug("AMI name= {} [{}]".format(image.name, image.virtualization_type))
+    log.debug("block device= {}".format(image.block_device_mappings))
+
     # region see/select
     regions = ec2_client.describe_regions()
-    # import pprint
-    # pprint.pprint(regions)
+    log.debug("regions {}".format(json.dumps(regions, indent=2)))
 
     if option == "magic":
         # todo check_if_allow_ssh_group_is_present
-        print("ssh group = {}".format(get_ssh_security_group()))  
+        log.info("ssh group = {}".format(get_ssh_security_group()))
 
     if option == "start":
         se_groups = get_ssh_security_group()
