@@ -8,17 +8,14 @@ import json
 
 
 def print_instances(the_instances):
-    # debug
-
     # Your default security group does not allow incoming SSH traffic by default.
     for i in the_instances:
-        print("-" * 50)
         current_state = i.state['Name']
-        print("EC2 instance={} [{}] AMI={} ssh-key={} hypervisor={}".format(i.id, current_state, i.image_id, i.key_name, i.hypervisor))
+        log.info("Instance {}/{}: {} [{}] ssh-key={} ".format(i.instance_type, i.image_id, i.id, current_state, i.key_name))
         if current_state != "terminated":
-            print("  connect: {} / {} ({})".format(i.public_dns_name, i.public_ip_address, i.private_ip_address))
-            print("  security groups: {}".format(i.security_groups))
-            print("  [{}] root storage is {}".format(i.root_device_type, i.root_device_name))
+            log.debug("  ssh ec2-user@{} / {} ({})".format(i.public_dns_name, i.public_ip_address, i.private_ip_address))
+            log.debug("  security groups: {}".format(i.security_groups))
+            log.debug("  [{}] root storage is {}".format(i.root_device_type, i.root_device_name))
 
 
 def get_running_instances():
@@ -57,6 +54,7 @@ if __name__ == "__main__":
     # todo object(s)
     # todo add new security group which allows SSH
     # todo check ResponseMetadata
+    # todo IPv6 support
 
     logging.basicConfig(format='%(asctime)-15s %(funcName)s %(message)s')
     log = logging.getLogger(__name__)
@@ -68,8 +66,6 @@ if __name__ == "__main__":
     option = sys.argv[1] if len(sys.argv) > 1 else "magic"
 
     ami_image = 'ami-6869aa05'  # amazon 2016.03.3
-    #ami_image = 'ami-60b6c60a'  # Amazon Linux
-
     ec2 = boto3.resource('ec2')
     ec2_client = boto3.client('ec2')
 
@@ -112,6 +108,7 @@ if __name__ == "__main__":
         key_name = 'temp_key'
         keypair = ec2_client.create_key_pair(KeyName=key_name)
         private_key = keypair['KeyMaterial']
+        fingerprint_key = keypair['KeyFingerprint']
         # save private key to a file
         with open('{}.pem'.format(key_name), "wt") as private_key_file:
             private_key_file.write(private_key)
