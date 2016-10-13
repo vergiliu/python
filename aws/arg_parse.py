@@ -8,3 +8,21 @@ if __name__ == "__main__":
     args = parser.parse_args()
     # print(args.echo)
     print("all arguments={}".format(args))
+
+
+import argparse
+
+if __name__ == "__main__":
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--action", type=str, default="list-all", choices=["list-all", "list-running"], help="legume")
+    my_args = ap.parse_args()
+
+    print(my_args.action)
+
+    # todo below
+    # list-all is default
+    # start / stop - can take optional pem
+    # key - can take optional filename
+    # default filename needs to be set
+    #
+    # create - can take # of instances (not yet)
