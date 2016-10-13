@@ -2,6 +2,7 @@ import json
 import logging
 import sys
 
+import argparse
 import boto3
 
 
@@ -63,6 +64,22 @@ if __name__ == "__main__":
     # magic by default
     option = sys.argv[1] if len(sys.argv) > 1 else "magic"
 
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument("--action", type=str, default="list-all", choices=["list-all", "list-running", "start", "stop"],
+                            help="perform one of the actions presented")
+    arg_parser.add_argument("-v", help="run with debug logging", action="store_true")  # todo check if it actually works, optional
+
+    my_args = arg_parser.parse_args()
+
+    log.info("action selected [{}]".format(my_args.action))
+
+    # todo list-all is default
+    # todo start / stop - can take optional pem
+    # todo key - can take optional filename
+    # todo default filename needs to be set
+    #
+    # todo create - can take # of instances (not yet)
+
     ami_image = 'ami-6869aa05'  # amazon 2016.03.3
     ec2 = boto3.resource('ec2')
     ec2_client = boto3.client('ec2')
@@ -79,13 +96,13 @@ if __name__ == "__main__":
         # todo check_if_allow_ssh_group_is_present
         log.info("ssh group = {}".format(get_ssh_security_group()))
 
-    if option == "start":
+    if my_args.action == "start":
         se_groups = get_ssh_security_group()
         instances = ec2.create_instances(ImageId=ami_image, MinCount=1, MaxCount=1, InstanceType='t2.micro',
                                          KeyName='temp_key', Monitoring={'Enabled': False}, SecurityGroups=se_groups)
         print_instances(instances)
 
-    if option == "stop":
+    elif option == "stop":
         # ids = ['instance-id-1', 'instance-id-2', ...]
         my_instances = get_running_instances()
         # ec2_client.stop_instances(InstanceIds=my_instances)
@@ -94,17 +111,17 @@ if __name__ == "__main__":
         ec2.instances.filter(InstanceIds=my_instances_ids).stop()
         ec2.instances.filter(InstanceIds=my_instances_ids).terminate()
 
-    if option == "list-all":
+    elif my_args.action == "list-all":
         # Boto 3:  # Use the filter() method of the instances collection to retrieve
         # all running EC2 instances.
         all_instances = get_all_instances()
         print_instances(all_instances)
 
-    if option == "list-running":
+    elif my_args.action == "list-running":
         run_instances = get_running_instances()
         print_instances(run_instances)
 
-    if option == "keypair":
+    elif option == "keypair":
         key_name = 'temp_key'
         keypair = ec2_client.create_key_pair(KeyName=key_name)
         private_key = keypair['KeyMaterial']
