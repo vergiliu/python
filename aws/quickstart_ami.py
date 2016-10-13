@@ -61,19 +61,17 @@ if __name__ == "__main__":
     # log.addHandler(logging.StreamHandler(stream=sys.stdout))
 
     instances = None
-    # magic by default
-    option = sys.argv[1] if len(sys.argv) > 1 else "magic"
 
     arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument("--action", type=str, default="list-all", choices=["list-all", "list-running", "start", "stop"],
+    arg_parser.add_argument("--action", type=str, default="list-all",
+                            choices=["list-all", "list-running", "list-ssh", "create-start", "stop-all", "stop", "start"],
                             help="perform one of the actions presented")
+    arg_parser.add_argument("--instance", type=str, help="specify instance ID that you want to be stopped/started")
     arg_parser.add_argument("-v", help="run with debug logging", action="store_true")  # todo check if it actually works, optional
-
     my_args = arg_parser.parse_args()
 
-    log.info("action selected [{}]".format(my_args.action))
+    log.info("Action selected [{}]".format(my_args.action))
 
-    # todo list-all is default
     # todo start / stop - can take optional pem
     # todo key - can take optional filename
     # todo default filename needs to be set
@@ -92,17 +90,17 @@ if __name__ == "__main__":
     regions = ec2_client.describe_regions()
     log.debug("regions {}".format(json.dumps(regions, indent=2)))
 
-    if option == "magic":
+    if my_args.action == "list-ssh":
         # todo check_if_allow_ssh_group_is_present
         log.info("ssh group = {}".format(get_ssh_security_group()))
 
-    if my_args.action == "start":
+    if my_args.action == "create-start":
         se_groups = get_ssh_security_group()
         instances = ec2.create_instances(ImageId=ami_image, MinCount=1, MaxCount=1, InstanceType='t2.micro',
                                          KeyName='temp_key', Monitoring={'Enabled': False}, SecurityGroups=se_groups)
         print_instances(instances)
 
-    elif option == "stop":
+    elif my_args.action == "stop-all":
         # ids = ['instance-id-1', 'instance-id-2', ...]
         my_instances = get_running_instances()
         # ec2_client.stop_instances(InstanceIds=my_instances)
@@ -110,6 +108,14 @@ if __name__ == "__main__":
         my_instances_ids = [i.id for i in my_instances]
         ec2.instances.filter(InstanceIds=my_instances_ids).stop()
         ec2.instances.filter(InstanceIds=my_instances_ids).terminate()
+
+    elif my_args.action == "stop" and my_args.instance:
+        log.info("Stop instance [{}]".format(my_args.instance))
+        ec2.instances.filter(InstanceIds=[my_args.instance]).stop()
+
+    elif my_args.action == "start" and my_args.instance:
+        log.info("Stop instance [{}]".format(my_args.instance))
+        ec2.instances.filter(InstanceIds=[my_args.instance]).start()
 
     elif my_args.action == "list-all":
         # Boto 3:  # Use the filter() method of the instances collection to retrieve
@@ -121,7 +127,7 @@ if __name__ == "__main__":
         run_instances = get_running_instances()
         print_instances(run_instances)
 
-    elif option == "keypair":
+    elif my_args.action == "keypair":
         key_name = 'temp_key'
         keypair = ec2_client.create_key_pair(KeyName=key_name)
         private_key = keypair['KeyMaterial']
