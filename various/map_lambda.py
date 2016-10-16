@@ -1,4 +1,4 @@
-def fib(i):ª
+def fib(i):
     if i == 0:
         return 0
     elif i == 1:

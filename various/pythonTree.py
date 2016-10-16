@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     root = Node(0)
 
-    for i in xrange(1, 10):
+    for i in range(1, 10):
         value = random.randint(1, 1000)
         root.add_node(Node(value))
         print value,
