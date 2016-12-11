@@ -5,4 +5,5 @@ ProjectEuler - project Euler samples
 PythonTesting - python testing book examples
 various - implementing a trie, hckrnews cli 
 todo_dotcloud - sample wsgi app to deploy in dotcloud using web.py and mongodb
+udemy-py - Udemy Python Mega Course
 TDD - Test Driven Development by Kent Beck
