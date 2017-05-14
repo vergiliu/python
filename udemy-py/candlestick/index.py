@@ -4,18 +4,22 @@ from bokeh.plotting import figure, show, output_file
 
 if __name__ == "__main__":
     start_date = datetime.datetime(2017, 3, 1)
-    end_date = datetime.datetime(2017, 3, 10)
+    end_date = datetime.datetime(2017, 4, 10)
     stock = "AAPL"
-    data = data.DataReader(name=stock, data_source="google", start=start_date, end=end_date)
-    print(data)
+    dr = data.DataReader(name=stock, data_source="yahoo", start=start_date, end=end_date)
+    print(dr)
 
-    output_graph = figure(x_axis_type='datetime', width=800, height=600, title=stock)  #, y_range=(130, 150))
+    my_graph = figure(x_axis_type='datetime', width=800, height=600, title=stock)  #, y_range=(130, 150))
+
     twelve_hours = 12 * 60 * 60 * 1000
-    output_graph.segment(data.index, data.High, data.index, data.Low, color="blue")
-    output_graph.rect(data.index[data.Close > data.Open], (data.Open + data.Close) / 2,
-                      twelve_hours, abs(data.Open - data.Close), color="green")
-    output_graph.rect(data.index[data.Close < data.Open], (data.Open + data.Close) / 2,
-                      twelve_hours, abs(data.Open - data.Close), color="red")
+    red = dr.Open > dr.Close
+    green = dr.Close > dr.Open
+
+    my_graph.segment(dr.index, dr.High, dr.index, dr.Low, color="blue")
+    my_graph.rect(dr.index[green], (dr.Open + dr.Close) / 2,
+                  twelve_hours, abs(dr.Open - dr.Close), color="green")
+    my_graph.rect(dr.index[red], (dr.Open + dr.Close) / 2,
+                  twelve_hours, abs(dr.Open - dr.Close), color="red")
     output_file("data_stocks.html")
-    show(output_graph)
+    show(my_graph)
     # online_data.index
